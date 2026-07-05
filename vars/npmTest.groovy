@@ -1,33 +1,42 @@
 def call(String directory,
+         String framework,
          String coverageDir,
-         String junitFile) {
+         String junitFile = '') {
 
     dir(directory) {
-
         customLog("Running tests in ${directory}")
 
-        if (isUnix()) {
-
-            sh """
-                npm test -- \
-                    --ci \
-                    --coverage \
-                    --watchAll=false \
-                    --coverageDirectory=${coverageDir} || true
-            """
-
-        } else {
-
-            bat """
-                npm test -- ^
-                    --ci ^
-                    --coverage ^
-                    --watchAll=false ^
-                    --coverageDirectory=${coverageDir}
-            """
+        if (framework == 'vitest') {
+            if (isUnix()) {
+                sh '''
+                    npm test -- --run --coverage
+                '''
+            } else {
+                bat '''
+                    npm test -- --run --coverage
+                '''
+            }
+        } else if (framework == 'jest') {
+            if (isUnix()) {
+                sh '''
+                    npm test -- \
+                        --coverage \
+                        --passWithNoTests
+                '''
+            } else {
+                bat '''
+                    npm test -- ^
+                        --coverage ^
+                        --passWithNoTests
+                '''
+            }
         }
 
-        junit allowEmptyResults: true,
-              testResults: junitFile
+        if (junitFile?.trim()) {
+            junit(
+                allowEmptyResults: true,
+                testResults: junitFile
+            )
+        }
     }
-}
+         }
