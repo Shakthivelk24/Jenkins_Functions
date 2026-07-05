@@ -14,14 +14,28 @@ def call(Map config = [:]) {
 
         withSonarQubeEnv(sonarServer) {
 
-            sh """
-                ${scannerHome}/bin/sonar-scanner \
-                    -Dsonar.projectKey=${projectKey} \
-                    -Dsonar.projectName="${projectName}" \
-                    -Dsonar.projectVersion=${projectVersion} \
-                    -Dsonar.sources=${sources} \
-                    -Dsonar.exclusions=${exclusions}
-            """
+            if (isUnix()) {
+
+                sh """
+                    ${scannerHome}/bin/sonar-scanner \
+                        -Dsonar.projectKey=${projectKey} \
+                        -Dsonar.projectName="${projectName}" \
+                        -Dsonar.projectVersion=${projectVersion} \
+                        -Dsonar.sources=${sources} \
+                        -Dsonar.exclusions=${exclusions}
+                """
+
+            } else {
+
+                bat """
+                    "${scannerHome}\\bin\\sonar-scanner.bat" ^
+                        -Dsonar.projectKey=${projectKey} ^
+                        -Dsonar.projectName="${projectName}" ^
+                        -Dsonar.projectVersion=${projectVersion} ^
+                        -Dsonar.sources=${sources} ^
+                        -Dsonar.exclusions=${exclusions}
+                """
+            }
         }
     }
 }
