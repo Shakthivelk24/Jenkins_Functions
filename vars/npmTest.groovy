@@ -39,4 +39,4 @@ def call(String directory,
             )
         }
     }
-         }
+}
