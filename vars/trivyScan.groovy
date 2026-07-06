@@ -4,6 +4,10 @@ def call(Map config = [:]) {
     def reportDir    = config.reportDir ?: 'reports/trivy'
     def reportName   = config.reportName ?: 'trivy'
 
+    if (!imageName) {
+        error "imageName is required."
+    }
+
     customLog("Scanning ${imageName}:${imageVersion}")
 
     if (isUnix()) {
