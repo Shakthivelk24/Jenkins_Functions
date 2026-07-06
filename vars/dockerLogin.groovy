@@ -1,5 +1,4 @@
 def call(String credentialsId = 'DockerHub') {
-
     withCredentials([
         usernamePassword(
             credentialsId: credentialsId,
@@ -7,26 +6,20 @@ def call(String credentialsId = 'DockerHub') {
             passwordVariable: 'DOCKER_PASS'
         )
     ]) {
-
-        customLog("Logging into Docker Hub...")
+        customLog('Logging into Docker Hub...')
 
         if (isUnix()) {
-
             sh '''
-                echo "$DOCKER_PASS" | docker login \
-                    -u "$DOCKER_USER" \
-                    --password-stdin
+               echo "$DOCKER_PASS" | docker login \
+               -u "$DOCKER_USER" \
+               --password-stdin
             '''
-
         } else {
-
             bat '''
-                echo %DOCKER_PASS% | docker login ^
-                    -u %DOCKER_USER% ^
-                    --password-stdin
-            '''
+             @echo off
+             echo|set /p="%DOCKER_PASS%" | docker login -u %DOCKER_USER% --password-stdin
+             '''
         }
-
-        customLog("Docker login successful.")
+        customLog('Docker login successful.')
     }
 }
