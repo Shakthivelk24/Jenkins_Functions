@@ -40,6 +40,7 @@ def call(Map config = [:]) {
                 --exit-code 1 \
                 --ignore-unfixed \
                 --severity CRITICAL \
+                --vuln-type os,library \
                 --format table \
                 ${imageName}:${imageVersion}
         """
@@ -70,6 +71,7 @@ def call(Map config = [:]) {
                 --exit-code 1 ^
                 --ignore-unfixed ^
                 --severity CRITICAL ^
+                --vuln-type os,library ^
                 --format table ^
                 ${imageName}:${imageVersion}
         """
