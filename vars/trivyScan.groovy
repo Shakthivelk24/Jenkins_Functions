@@ -35,11 +35,11 @@ def call(Map config = [:]) {
                 --output ${reportDir}/${reportName}.html \
                 ${imageName}:${imageVersion}
 
-            # Console Report
+            # Console Report + Security Gate
             trivy image \
-                --exit-code 0 \
+                --exit-code 1 \
                 --ignore-unfixed \
-                --severity HIGH,CRITICAL \
+                --severity CRITICAL \
                 --format table \
                 ${imageName}:${imageVersion}
         """
@@ -67,9 +67,9 @@ def call(Map config = [:]) {
                 ${imageName}:${imageVersion}
 
             trivy image ^
-                --exit-code 0 ^
+                --exit-code 1 ^
                 --ignore-unfixed ^
-                --severity HIGH,CRITICAL ^
+                --severity CRITICAL ^
                 --format table ^
                 ${imageName}:${imageVersion}
         """

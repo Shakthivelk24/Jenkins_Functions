@@ -25,10 +25,10 @@ def call(Map config = [:]) {
                 --output ${reportDir}/secret-scan.html \
                 ${scanPath}
 
-            # Console Report
+            # Console Report + Security Gate
             trivy fs \
                 --scanners secret \
-                --exit-code 0 \
+                --exit-code 1 \
                 --format table \
                 ${scanPath}
         """
@@ -53,7 +53,7 @@ def call(Map config = [:]) {
 
             trivy fs ^
                 --scanners secret ^
-                --exit-code 0 ^
+                --exit-code 1 ^
                 --format table ^
                 "${scanPath}"
         """
