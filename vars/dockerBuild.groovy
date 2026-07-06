@@ -3,7 +3,9 @@ def call(String imageName,
          String context = ".",
          String imageVersion = env.BUILD_NUMBER) {
 
-    stage('Docker Build') {
+    customLog("Building Docker image: ${imageName}:${imageVersion}")
+
+    if (isUnix()) {
 
         sh """
             docker build \
@@ -12,5 +14,17 @@ def call(String imageName,
                 -f ${dockerfile} \
                 ${context}
         """
+
+    } else {
+
+        bat """
+            docker build ^
+                -t ${imageName}:${imageVersion} ^
+                -t ${imageName}:latest ^
+                -f ${dockerfile} ^
+                ${context}
+        """
     }
+
+    customLog("Docker image built successfully.")
 }
