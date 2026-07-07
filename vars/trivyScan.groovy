@@ -19,7 +19,7 @@ def call(Map config = [:]) {
                 --exit-code 0 \
                 --ignore-unfixed \
                 --severity LOW,MEDIUM,HIGH,CRITICAL \
-                --vuln-type os,library \
+                --pkg-types os,library
                 --format json \
                 --output ${reportDir}/${reportName}.json \
                 ${imageName}:${imageVersion}
@@ -29,7 +29,7 @@ def call(Map config = [:]) {
                 --exit-code 0 \
                 --ignore-unfixed \
                 --severity LOW,MEDIUM,HIGH,CRITICAL \
-                --vuln-type os,library \
+                --pkg-types os,library \
                 --format template \
                 --template "@tools/trivy/html.tpl" \
                 --output ${reportDir}/${reportName}.html \
@@ -40,7 +40,7 @@ def call(Map config = [:]) {
                 --exit-code 1 \
                 --ignore-unfixed \
                 --severity CRITICAL \
-                --vuln-type os,library \
+                --pkg-types os,library \
                 --format table \
                 ${imageName}:${imageVersion}
         """
@@ -52,7 +52,7 @@ def call(Map config = [:]) {
                 --exit-code 0 ^
                 --ignore-unfixed ^
                 --severity LOW,MEDIUM,HIGH,CRITICAL ^
-                --vuln-type os,library ^
+                --pkg-types os,library ^
                 --format json ^
                 --output "${reportDir}\\${reportName}.json" ^
                 ${imageName}:${imageVersion}
@@ -61,7 +61,7 @@ def call(Map config = [:]) {
                 --exit-code 0 ^
                 --ignore-unfixed ^
                 --severity LOW,MEDIUM,HIGH,CRITICAL ^
-                --vuln-type os,library ^
+                --pkg-types os,library ^
                 --format template ^
                 --template "@tools/trivy/html.tpl" ^
                 --output "${reportDir}\\${reportName}.html" ^
@@ -71,7 +71,7 @@ def call(Map config = [:]) {
                 --exit-code 1 ^
                 --ignore-unfixed ^
                 --severity CRITICAL ^
-                --vuln-type os,library ^
+                --pkg-types os,library ^
                 --format table ^
                 ${imageName}:${imageVersion}
         """
