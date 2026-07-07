@@ -37,17 +37,17 @@ def call(Map config = [:]) {
         if (isUnix()) {
 
             sh """
-                kubectl apply -f kubernetes/namespace.yaml
-                kubectl apply -f kubernetes/configmap.yaml
+                kubectl apply -f k8s/namespace.yaml
+                kubectl apply -f k8s/configmap.yaml
                 kubectl apply -f ${secretFile}
 
-                kubectl apply -f kubernetes/backend-deployment.yaml
-                kubectl apply -f kubernetes/backend-service.yaml
+                kubectl apply -f k8s/backend-deployment.yaml
+                kubectl apply -f k8s/backend-service.yaml
 
-                kubectl apply -f kubernetes/frontend-deployment.yaml
-                kubectl apply -f kubernetes/frontend-service.yaml
+                kubectl apply -f k8s/frontend-deployment.yaml
+                kubectl apply -f k8s/frontend-service.yaml
 
-                kubectl apply -f kubernetes/ingress.yaml
+                kubectl apply -f k8s/ingress.yaml
 
                 kubectl set image deployment/frontend \
                     frontend=${frontendImage}:${imageTag} \
@@ -69,17 +69,17 @@ def call(Map config = [:]) {
         } else {
 
             bat """
-                kubectl apply -f kubernetes\\namespace.yaml
-                kubectl apply -f kubernetes\\configmap.yaml
+                kubectl apply -f k8s\\namespace.yaml
+                kubectl apply -f k8s\\configmap.yaml
                 kubectl apply -f ${secretFile}
 
-                kubectl apply -f kubernetes\\backend-deployment.yaml
-                kubectl apply -f kubernetes\\backend-service.yaml
+                kubectl apply -f k8s\\backend-deployment.yaml
+                kubectl apply -f k8s\\backend-service.yaml
 
-                kubectl apply -f kubernetes\\frontend-deployment.yaml
-                kubectl apply -f kubernetes\\frontend-service.yaml
+                kubectl apply -f k8s\\frontend-deployment.yaml
+                kubectl apply -f k8s\\frontend-service.yaml
 
-                kubectl apply -f kubernetes\\ingress.yaml
+                kubectl apply -f k8s\\ingress.yaml
 
                 kubectl set image deployment/frontend ^
                     frontend=${frontendImage}:${imageTag} ^
