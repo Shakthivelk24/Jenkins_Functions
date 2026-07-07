@@ -5,8 +5,8 @@ def call(Map config = [:]) {
     def backendImage   = config.backendImage
     def imageTag       = config.imageTag ?: env.BUILD_NUMBER
 
-    def templateFile   = config.templateFile ?: 'kubernetes/secret.yaml.template'
-    def secretFile     = config.secretFile ?: 'kubernetes/secret.yaml'
+    def templateFile   = config.templateFile ?: 'k8s/secret.yaml.template'
+    def secretFile     = config.secretFile ?: 'k8s/secret.yaml'
 
     if (!frontendImage || !backendImage) {
         error "frontendImage and backendImage are required."
