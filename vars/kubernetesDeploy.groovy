@@ -19,22 +19,24 @@ def call(Map config = [:]) {
         string(credentialsId: 'MONGODB_URL', variable: 'MONGODB_URL')
     ]) {
 
+        // =====================================================
+        // Generate Kubernetes Secret (Cross-platform)
+        // =====================================================
+
+        def template = readFile(file: templateFile)
+
+        template = template
+            .replace("__JWT_SECRET__", env.JWT_SECRET)
+            .replace("__MONGODB_URL__", env.MONGODB_URL)
+
+        writeFile(
+            file: secretFile,
+            text: template
+        )
+
         if (isUnix()) {
 
             sh """
-                # ==========================================
-                # Generate Kubernetes Secret
-                # ==========================================
-
-                sed \
-                    -e "s|__JWT_SECRET__|\${JWT_SECRET}|g" \
-                    -e "s|__MONGODB_URL__|\${MONGODB_URL}|g" \
-                    ${templateFile} > ${secretFile}
-
-                # ==========================================
-                # Apply Kubernetes Resources
-                # ==========================================
-
                 kubectl apply -f kubernetes/namespace.yaml
                 kubectl apply -f kubernetes/configmap.yaml
                 kubectl apply -f ${secretFile}
@@ -47,10 +49,6 @@ def call(Map config = [:]) {
 
                 kubectl apply -f kubernetes/ingress.yaml
 
-                # ==========================================
-                # Update Images
-                # ==========================================
-
                 kubectl set image deployment/frontend \
                     frontend=${frontendImage}:${imageTag} \
                     -n ${namespace}
@@ -58,10 +56,6 @@ def call(Map config = [:]) {
                 kubectl set image deployment/backend \
                     backend=${backendImage}:${imageTag} \
                     -n ${namespace}
-
-                # ==========================================
-                # Wait for Rollout
-                # ==========================================
 
                 kubectl rollout status deployment/frontend \
                     -n ${namespace} \
@@ -75,12 +69,6 @@ def call(Map config = [:]) {
         } else {
 
             bat """
-                powershell -Command ^
-                "(Get-Content '${templateFile}') ^
-                -replace '__JWT_SECRET__','%JWT_SECRET%' ^
-                -replace '__MONGODB_URL__','%MONGODB_URL%' ^
-                | Set-Content '${secretFile}'"
-
                 kubectl apply -f kubernetes\\namespace.yaml
                 kubectl apply -f kubernetes\\configmap.yaml
                 kubectl apply -f ${secretFile}
