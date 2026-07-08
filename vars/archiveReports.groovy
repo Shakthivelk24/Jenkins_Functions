@@ -11,6 +11,7 @@ def call() {
             reports/trivy/*.html,
             reports/zap/*.json,
             reports/zap/*.html,
+            reports/dependency-check/*,
             coverage/**/*
         ''',
         allowEmptyArchive: true,
@@ -71,6 +72,19 @@ def call() {
         reportFiles: 'backend-api-scan.html',
         reportName: 'OWASP ZAP Backend API Report',
         reportTitles: 'Backend API Security Report'
+    ])
+
+    // ==========================================================
+    // OWASP Dependency-Check Report
+    // ==========================================================
+    publishHTML([
+        allowMissing: true,
+        alwaysLinkToLastBuild: true,
+        keepAll: true,
+        reportDir: 'reports/dependency-check',
+        reportFiles: 'dependency-check-report.html',
+        reportName: 'OWASP Dependency-Check Report',
+        reportTitles: 'Dependency Vulnerability Report'
     ])
 
     // ==========================================================
