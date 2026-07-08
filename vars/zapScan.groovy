@@ -9,7 +9,7 @@ def call(Map config = [:]) {
         error "targetUrl is required."
     }
 
-    customLog("Running OWASP ZAP scan against ${targetUrl}")
+    customLog("Running OWASP ZAP Baseline Scan against ${targetUrl}")
 
     int status
 
@@ -23,7 +23,7 @@ def call(Map config = [:]) {
                     --network ${dockerNetwork} \
                     -v \$(pwd)/${reportDir}:/zap/wrk:rw \
                     ghcr.io/zaproxy/zaproxy:stable \
-                    zap-full-scan.py \
+                    zap-baseline.py \
                         -t ${targetUrl} \
                         -r ${reportName}.html \
                         -J ${reportName}.json \
@@ -43,7 +43,7 @@ def call(Map config = [:]) {
                     --network ${dockerNetwork} ^
                     -v "%CD%\\${reportDir}:/zap/wrk:rw" ^
                     ghcr.io/zaproxy/zaproxy:stable ^
-                    zap-full-scan.py ^
+                    zap-baseline.py ^
                         -t ${targetUrl} ^
                         -r ${reportName}.html ^
                         -J ${reportName}.json ^
@@ -59,21 +59,24 @@ def call(Map config = [:]) {
     switch (status) {
 
         case 0:
-            customLog("No vulnerabilities detected.")
+            customLog("No security issues detected.")
             break
 
         case 1:
-            error("OWASP ZAP detected HIGH-RISK vulnerabilities.")
+            error("OWASP ZAP detected FAIL-level vulnerabilities.")
 
         case 2:
-            customLog("OWASP ZAP detected warnings. Review the HTML report.")
+            currentBuild.result = 'UNSTABLE'
+            customLog("OWASP ZAP detected WARN-level issues. Review the HTML report.")
             break
 
         case 3:
-            error("OWASP ZAP detected HIGH-RISK vulnerabilities and warnings.")
+            currentBuild.result = 'UNSTABLE'
+            customLog("OWASP ZAP detected FAIL and WARN issues. Review the HTML report.")
+            break
 
         default:
-            error("OWASP ZAP scan failed with exit code ${status}.")
+            error("OWASP ZAP scan execution failed. Exit Code: ${status}")
     }
 
     customLog("OWASP ZAP scan completed.")
