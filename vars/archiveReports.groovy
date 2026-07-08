@@ -9,8 +9,8 @@ def call() {
         artifacts: '''
             reports/trivy/*.json,
             reports/trivy/*.html,
-            reports/zap/*.json,
-            reports/zap/*.html,
+            reports/owasp-zap/*.json,
+            reports/owasp-zap/*.html,
             reports/dependency-check/*,
             coverage/**/*
         ''',
@@ -58,7 +58,7 @@ def call() {
         allowMissing: true,
         alwaysLinkToLastBuild: true,
         keepAll: true,
-        reportDir: 'reports/zap',
+        reportDir: 'reports/owasp-zap',
         reportFiles: 'frontend-scan.html',
         reportName: 'OWASP ZAP Frontend Report',
         reportTitles: 'Frontend Security Report'
@@ -68,7 +68,7 @@ def call() {
         allowMissing: true,
         alwaysLinkToLastBuild: true,
         keepAll: true,
-        reportDir: 'reports/zap',
+        reportDir: 'reports/owasp-zap',
         reportFiles: 'backend-api-scan.html',
         reportName: 'OWASP ZAP Backend API Report',
         reportTitles: 'Backend API Security Report'
