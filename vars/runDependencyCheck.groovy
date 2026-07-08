@@ -5,17 +5,23 @@ def call(Map config = [:]) {
 
     customLog("Running OWASP Dependency Check...")
 
+    // Must match the Name configured in:
+    // Manage Jenkins -> Tools -> OWASP Dependency-Check
+    def dcHome = tool 'DependencyCheck'
+
+    echo "Dependency Check Home: ${dcHome}"
+
     if (isUnix()) {
 
         sh """
             mkdir -p ${reportDir}
 
-            dependency-check.sh \
+            "${dcHome}/bin/dependency-check.sh" \
                 --project "Request System" \
-                --scan ${scanPath} \
+                --scan "${scanPath}" \
                 --format HTML \
                 --format JSON \
-                --out ${reportDir}
+                --out "${reportDir}"
         """
 
     } else {
@@ -23,7 +29,7 @@ def call(Map config = [:]) {
         bat """
             if not exist "${reportDir}" mkdir "${reportDir}"
 
-            dependency-check.bat ^
+            "${dcHome}\\bin\\dependency-check.bat" ^
                 --project "Request System" ^
                 --scan "${scanPath}" ^
                 --format HTML ^
