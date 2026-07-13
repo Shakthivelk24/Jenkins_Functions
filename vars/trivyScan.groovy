@@ -19,7 +19,7 @@ def call(Map config = [:]) {
                 --exit-code 0 \
                 --ignore-unfixed \
                 --severity LOW,MEDIUM,HIGH,CRITICAL \
-                --pkg-types os,library
+                --pkg-types os,library \
                 --format json \
                 --output ${reportDir}/${reportName}.json \
                 ${imageName}:${imageVersion}
