@@ -1,4 +1,5 @@
 def call(Map config = [:]) {
+
     def imageName    = config.imageName
     def imageVersion = config.imageVersion ?: env.BUILD_NUMBER
     def reportDir    = config.reportDir ?: 'reports/trivy'
@@ -8,74 +9,76 @@ def call(Map config = [:]) {
         error "imageName is required."
     }
 
+    def cacheDir = "${reportDir}/cache-${reportName}"
+
     customLog("Scanning ${imageName}:${imageVersion}")
 
     if (isUnix()) {
-        sh """
-            mkdir -p ${reportDir}
 
-            # JSON Report
+        sh """
+            mkdir -p "${reportDir}"
+            mkdir -p "${cacheDir}"
+
             trivy image \
-                --exit-code 0 \
-                --ignore-unfixed \
-                --severity LOW,MEDIUM,HIGH,CRITICAL \
-                --pkg-types os,library \
-                --format json \
-                --output ${reportDir}/${reportName}.json \
-                ${imageName}:${imageVersion}
+                --download-db-only \
+                --cache-dir "${cacheDir}" \
+                --skip-version-check
+
+            COMMON="--cache-dir ${cacheDir} \
+                    --skip-version-check \
+                    --scanners vuln \
+                    --ignore-unfixed \
+                    --pkg-types os,library"
 
             # HTML Report
-            trivy image \
+            trivy image \$COMMON \
                 --exit-code 0 \
-                --ignore-unfixed \
                 --severity LOW,MEDIUM,HIGH,CRITICAL \
-                --pkg-types os,library \
                 --format template \
                 --template "@tools/trivy/html.tpl" \
-                --output ${reportDir}/${reportName}.html \
+                --output "${reportDir}/${reportName}.html" \
                 ${imageName}:${imageVersion}
 
-            # Console Report + Security Gate
-            trivy image \
+            # Security Gate
+            trivy image \$COMMON \
                 --exit-code 1 \
-                --ignore-unfixed \
                 --severity CRITICAL \
-                --pkg-types os,library \
                 --format table \
                 ${imageName}:${imageVersion}
         """
+
     } else {
+
         bat """
             if not exist "${reportDir}" mkdir "${reportDir}"
+            if not exist "${reportDir}\\cache-${reportName}" mkdir "${reportDir}\\cache-${reportName}"
 
             trivy image ^
-                --exit-code 0 ^
-                --ignore-unfixed ^
-                --severity LOW,MEDIUM,HIGH,CRITICAL ^
-                --pkg-types os,library ^
-                --format json ^
-                --output "${reportDir}\\${reportName}.json" ^
-                ${imageName}:${imageVersion}
+                --download-db-only ^
+                --cache-dir "${reportDir}\\cache-${reportName}" ^
+                --skip-version-check
 
+            set TRIVY_COMMON=--cache-dir "${reportDir}\\cache-${reportName}" --skip-version-check --scanners vuln --ignore-unfixed --pkg-types os,library
+
+            rem HTML Report
             trivy image ^
+                %TRIVY_COMMON% ^
                 --exit-code 0 ^
-                --ignore-unfixed ^
                 --severity LOW,MEDIUM,HIGH,CRITICAL ^
-                --pkg-types os,library ^
                 --format template ^
                 --template "@tools/trivy/html.tpl" ^
                 --output "${reportDir}\\${reportName}.html" ^
                 ${imageName}:${imageVersion}
 
+            rem Security Gate
             trivy image ^
+                %TRIVY_COMMON% ^
                 --exit-code 1 ^
-                --ignore-unfixed ^
                 --severity CRITICAL ^
-                --pkg-types os,library ^
                 --format table ^
                 ${imageName}:${imageVersion}
         """
     }
 
-    customLog('Trivy scan completed.')
+    customLog("Trivy scan completed.")
 }
