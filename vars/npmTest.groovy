@@ -1,34 +1,34 @@
 def call(String directory,
-         String framework,
-         String coverageDir,
+         String framework = 'vitest',
+         String coverageDir = 'coverage',
          String junitFile = '') {
 
     dir(directory) {
-        customLog("Running tests in ${directory}")
+
+        customLog("Running ${framework} tests in ${directory}")
 
         if (framework == 'vitest') {
+
             if (isUnix()) {
-                sh '''
+                sh """
                     npm test -- --run --coverage
-                '''
+                """
             } else {
-                bat '''
+                bat """
                     npm test -- --run --coverage
-                '''
+                """
             }
+
         } else if (framework == 'jest') {
+
             if (isUnix()) {
-                sh '''
-                    npm test -- \
-                        --coverage \
-                        --passWithNoTests
-                '''
+                sh """
+                    npm test -- --coverage --passWithNoTests
+                """
             } else {
-                bat '''
-                    npm test -- ^
-                        --coverage ^
-                        --passWithNoTests
-                '''
+                bat """
+                    npm test -- --coverage --passWithNoTests
+                """
             }
         }
 
@@ -37,6 +37,12 @@ def call(String directory,
                 allowEmptyResults: true,
                 testResults: junitFile
             )
+        }
+
+        if (fileExists("${coverageDir}/lcov.info")) {
+            customLog("Coverage report found: ${coverageDir}/lcov.info")
+        } else {
+            customLog("WARNING: Coverage report NOT found!")
         }
     }
 }
