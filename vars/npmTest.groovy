@@ -11,11 +11,11 @@ def call(String directory,
 
             if (isUnix()) {
                 sh """
-                    npm test -- --run --coverage
+                   npm run coverage
                 """
             } else {
                 bat """
-                    npm test -- --run --coverage
+                    npm run coverage
                 """
             }
 
