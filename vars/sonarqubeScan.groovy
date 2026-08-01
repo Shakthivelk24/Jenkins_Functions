@@ -6,10 +6,10 @@ def call(Map config = [:]) {
     def projectName    = config.projectName
     def projectVersion = config.projectVersion ?: env.BUILD_NUMBER
     def sources        = config.sources ?: '.'
-    def exclusions     = config.exclusions ?: '**/node_modules/**,**/dist/**'
+    def exclusions     = config.exclusions ?: '**/node_modules/**,**/dist/**,**/coverage/**,**/lcov-report/**'
 
     // Coverage Reports
-    def jsCoverage = config.jsCoverage ?: 'client/coverage/lcov.info'
+    def jsCoverage = config.jsCoverage ?: '"client/coverage/lcov.info,server/coverage/lcov.info"'
 
     stage('🔍 SonarQube Scan') {
 
