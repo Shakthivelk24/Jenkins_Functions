@@ -9,7 +9,7 @@ def call(Map config = [:]) {
     def exclusions     = config.exclusions ?: '**/node_modules/**,**/dist/**,**/coverage/**,**/lcov-report/**'
 
     // Coverage Reports
-    def jsCoverage = config.jsCoverage ?: '"client/coverage/lcov.info,server/coverage/lcov.info"'
+    def jsCoverage = config.jsCoverage ?: "client/coverage/lcov.info,server/coverage/lcov.info"
 
     stage('🔍 SonarQube Scan') {
 
