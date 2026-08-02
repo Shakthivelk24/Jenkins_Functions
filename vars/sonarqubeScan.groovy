@@ -26,7 +26,8 @@ def call(Map config = [:]) {
                     -Dsonar.projectVersion=${projectVersion} \
                     -Dsonar.sources=${sources} \
                     -Dsonar.exclusions=${exclusions} \
-                    -Dsonar.javascript.lcov.reportPaths=${jsCoverage}
+                    -Dsonar.javascript.lcov.reportPaths=${jsCoverage} \
+                    -Dsonar.verbose=true
                 """
 
             } else {
@@ -38,7 +39,8 @@ def call(Map config = [:]) {
                     -Dsonar.projectVersion=${projectVersion} ^
                     -Dsonar.sources=${sources} ^
                     -Dsonar.exclusions=${exclusions} ^
-                    -Dsonar.javascript.lcov.reportPaths=${jsCoverage}
+                    -Dsonar.javascript.lcov.reportPaths=${jsCoverage} ^
+                    -Dsonar.verbose=true
                 """
             }
         }
